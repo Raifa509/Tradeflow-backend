@@ -11,6 +11,7 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
 // ─── ENUMS ───────────────────────────────────────────
 
 enum Role {
@@ -44,6 +45,7 @@ model User {
 
 model Product {
   id                 Int                 @id @default(autoincrement())
+  refNumber          String              @unique
   name               String
   sku                String              @unique
   quantity           Int                 @default(0)
@@ -57,11 +59,13 @@ model Product {
 
 model Customer {
   id          Int          @id @default(autoincrement())
+  refNumber   String       @unique
   name        String
-  email       String
+  email       String       @unique
   phone       String
   company     String
   address     String
+  isActive    Boolean      @default(true)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   salesOrders SalesOrder[]
@@ -69,8 +73,9 @@ model Customer {
 
 model Supplier {
   id             Int             @id @default(autoincrement())
+  refNumber      String          @unique
   name           String
-  email          String
+  email          String          @unique
   phone          String
   company        String
   address        String
@@ -81,6 +86,7 @@ model Supplier {
 
 model SalesOrder {
   id         Int              @id @default(autoincrement())
+  refNumber  String           @unique
   customerId Int
   customer   Customer         @relation(fields: [customerId], references: [id])
   status     OrderStatus      @default(PENDING)
@@ -104,6 +110,7 @@ model SalesOrderItem {
 
 model PurchaseOrder {
   id         Int                 @id @default(autoincrement())
+  refNumber  String              @unique
   supplierId Int
   supplier   Supplier            @relation(fields: [supplierId], references: [id])
   status     OrderStatus         @default(PENDING)
@@ -126,6 +133,7 @@ model PurchaseOrderItem {
 
 model Invoice {
   id           Int           @id @default(autoincrement())
+  refNumber    String        @unique
   salesOrderId Int           @unique
   salesOrder   SalesOrder    @relation(fields: [salesOrderId], references: [id])
   total        Float
