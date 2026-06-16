@@ -1,4 +1,4 @@
-import { IsEmail, IsString } from "class-validator";
+import { IsBoolean, IsEmail, IsOptional, IsString } from "class-validator";
 
 export class CreateCustomerDto {
     @IsString()
@@ -16,5 +16,12 @@ export class CreateCustomerDto {
     @IsString()
     address: string;
 
+    @IsBoolean()
+    isActive: boolean;
+
+    @IsString()
+    @IsOptional()
+    reason:string
 
 }
+

@@ -7,7 +7,7 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 @UseGuards(JwtAuthGuard)
 @Controller('suppliers')
 export class SuppliersController {
-  constructor(private suppliersService: SuppliersService) {}
+  constructor(private suppliersService: SuppliersService) { }
 
   @Get()
   findAll() { return this.suppliersService.findAll(); }
@@ -22,5 +22,7 @@ export class SuppliersController {
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateSupplierDto) { return this.suppliersService.update(id, dto); }
 
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) id: number) { return this.suppliersService.delete(id); }
+  delete(@Param('id', ParseIntPipe) id: number, @Body() body?: { reason?: string }) {
+  return this.suppliersService.delete(id, body?.reason);
+}
 }

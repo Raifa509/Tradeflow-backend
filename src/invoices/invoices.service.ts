@@ -7,7 +7,7 @@ export class InvoicesService {
 
   async findAll() {
     return await this.prisma.invoice.findMany({
-      include: { salesOrder: { include: { customer: true } } },
+      include: { salesOrder: { include: { customer: true,items: { include: { product: true } },  } } },
       orderBy: { createdAt: 'desc' },
     });
   }

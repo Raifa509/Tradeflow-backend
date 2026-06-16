@@ -21,7 +21,6 @@ export class CustomersService {
 
   async findAll() {
     return await this.prisma.customer.findMany({
-      where: { isActive: true },
       orderBy: { createdAt: 'desc' },
     });
   }

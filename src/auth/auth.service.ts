@@ -12,29 +12,28 @@ export class AuthService {
     ) { }
 
 
-    async login(dto: LoginDto) {
+     async login(dto: LoginDto) {
         const user = await this.prisma.user.findUnique({
-            where: {
-                email: dto.email
-            }
+            where: { email: dto.email }
         })
+ 
         if (!user) {
-            throw new UnauthorizedException('Invalid email or password')
+            throw new UnauthorizedException('Account Doesn"t exists.')
         }
-
+ 
         const isPasswordValid = await bcrypt.compare(dto.password, user.password)
         if (!isPasswordValid) {
-            throw new UnauthorizedException('Invalid email or password')
+            throw new UnauthorizedException('Incorrect email or password. Please try again.')
         }
-
-        //create payload
+ 
         const payload = {
             sub: user.id,
             email: user.email,
             role: user.role
         }
-        //sign and generate token
+ 
         const token = await this.jwtService.signAsync(payload)
+ 
         return {
             user: {
                 id: user.id,
@@ -42,12 +41,11 @@ export class AuthService {
                 email: user.email,
                 role: user.role,
                 createdAt: user.createdAt,
-                updatedAt:user.updatedAt
+                updatedAt: user.updatedAt
             },
             token,
         }
     }
-
     async getMe(userId: number) {
         const user = await this.prisma.user.findUnique({
             where: { id: userId },

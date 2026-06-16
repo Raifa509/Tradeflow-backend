@@ -5,7 +5,7 @@ import { UpdateSupplierDto } from './dto/update-supplier.dto';
 
 @Injectable()
 export class SuppliersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   private async generateRef(): Promise<string> {
     const year = new Date().getFullYear();
@@ -55,8 +55,11 @@ export class SuppliersService {
     });
   }
 
-  async delete(id: number) {
+  async delete(id: number, reason?: string) {
     await this.findOne(id);
-    return await this.prisma.supplier.delete({ where: { id } });
+    return await this.prisma.supplier.update({
+      where: { id },
+      data: { isActive: false, ...(reason && { reason }) },
+    });
   }
 }
