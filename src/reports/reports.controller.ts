@@ -1,6 +1,8 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards, ValidationPipe } from '@nestjs/common';
 import { ReportsService } from './reports.service';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { GetSalesReportDto } from './dto/get-sales-report';
+
 
 @UseGuards(JwtAuthGuard)
 @Controller('reports')
@@ -9,10 +11,9 @@ export class ReportsController {
 
   @Get('sales')
   getSalesReport(
-    @Query('startDate') startDate: string,
-    @Query('endDate') endDate: string,
+    @Query(new ValidationPipe({ transform: true })) query: GetSalesReportDto,
   ) {
-    return this.reportsService.getSalesReport(startDate, endDate);
+    return this.reportsService.getSalesReport(query.startDate, query.endDate);
   }
 
   @Get('inventory')

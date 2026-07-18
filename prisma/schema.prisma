@@ -39,6 +39,7 @@ model User {
   email     String   @unique
   password  String
   role      Role     @default(STAFF)
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -80,8 +81,8 @@ model Supplier {
   phone          String
   company        String
   address        String
-  isActive       Boolean         @default(true)  
-  reason         String?   
+  isActive       Boolean         @default(true)
+  reason         String?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   purchaseOrders PurchaseOrder[]
@@ -95,6 +96,7 @@ model SalesOrder {
   status     OrderStatus      @default(PENDING)
   total      Float            @default(0)
   notes      String?
+  reason     String?
   createdAt  DateTime         @default(now())
   updatedAt  DateTime         @updatedAt
   items      SalesOrderItem[]
@@ -119,6 +121,7 @@ model PurchaseOrder {
   status     OrderStatus         @default(PENDING)
   total      Float               @default(0)
   notes      String?
+  reason     String?
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
   items      PurchaseOrderItem[]

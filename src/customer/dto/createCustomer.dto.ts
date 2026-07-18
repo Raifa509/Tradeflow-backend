@@ -17,11 +17,12 @@ export class CreateCustomerDto {
     address: string;
 
     @IsBoolean()
+    @IsOptional()
     isActive: boolean;
 
     @IsString()
     @IsOptional()
-    reason:string
+    reason: string
 
 }
 

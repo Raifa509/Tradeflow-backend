@@ -1,9 +1,12 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsIn } from 'class-validator';
 
 export class UpdatePurchaseOrderDto {
+  @IsIn(['PENDING', 'CONFIRMED', 'DELIVERED', 'CANCELLED'])
+  status: 'PENDING' | 'CONFIRMED' | 'DELIVERED' | 'CANCELLED';
+
   @IsOptional()
   @IsString()
-  status?: string;
+  reason?: string;
 
   @IsOptional()
   @IsString()

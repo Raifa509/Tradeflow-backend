@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchase-order.dto';
@@ -10,7 +10,7 @@ export class PurchasesService {
   private async generateRef(): Promise<string> {
     const year = new Date().getFullYear();
     const last = await this.prisma.purchaseOrder.findFirst({
-      where: { refNumber: { startsWith: `PURC-${year}` } },
+      where: { refNumber: { startsWith: `PUR-${year}` } },
       orderBy: { refNumber: 'desc' },
     });
     const next = last
@@ -64,7 +64,10 @@ export class PurchasesService {
   async updateStatus(id: number, dto: UpdatePurchaseOrderDto) {
     const order = await this.findOne(id);
 
-    // Auto increase stock when DELIVERED
+    if (dto.status === 'CANCELLED' && !dto.reason?.trim()) {
+      throw new BadRequestException('A reason is required to cancel a purchase order');
+    }
+
     if (dto.status === 'DELIVERED') {
       for (const item of order.items) {
         await this.prisma.product.update({
@@ -76,7 +79,10 @@ export class PurchasesService {
 
     return await this.prisma.purchaseOrder.update({
       where: { id },
-      data: { status: dto.status as any },
+      data: {
+        status: dto.status as any,
+        ...(dto.status === 'CANCELLED' ? { reason: dto.reason } : {}),
+      },
       include: { supplier: true, items: { include: { product: true } } },
     });
   }
